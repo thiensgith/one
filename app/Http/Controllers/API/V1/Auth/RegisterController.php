@@ -34,19 +34,20 @@ class RegisterController extends Controller
     		'password' => Hash::make($request->password),
     	]);
 
-        $http = new \GuzzleHttp\Client;
+        $params = [
+            'grant_type' => 'password',
+            'client_id' => $this->client->id,
+            'client_secret' => $this->client->secret,
+            'username' => $request->email,
+            'password' => $request->password,       
+            'scope' => '*',
+        ];
 
-        $response = $http->post('http://localhost:8000/oauth/token', [
-            'form_params' => [
-                'grant_type' => 'password',
-                'client_id' => $this->client->id,
-                'client_secret' => $this->client->secret,
-                'username' => $request->email,
-                'password' => $request->password,
-                'scope' => '*',
-            ],
-        ]);
 
-        return json_decode((string) $response->getBody(), true);
+        $proxy = Request::create('oauth/token', 'POST', $params);
+
+        $response = app()->handle($proxy);
+
+        return $response;
     }
 }

@@ -14,8 +14,14 @@ use Illuminate\Http\Request;
 */
 
 Route::post('register', 'API\V1\Auth\RegisterController@register');
+Route::post('login', 'API\V1\Auth\LoginController@login');
+Route::post('refresh_token', 'API\V1\Auth\LoginController@refresh_token');
 
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+
+Route::middleware('auth:api')->group(function () {
+	Route::get('user',function (Request $request) {
+    	return $request->user();
+});
+    Route::post('logout', 'API\V1\Auth\LoginController@logout');
 });
